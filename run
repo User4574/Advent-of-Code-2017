@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+arg = (ARGV.first || "").chomp.downcase
+
+def run(day)
+  puts "Day #{day[3..4]}:"
+
+  runpart(day, 1) if File.exists?("#{day}/part1")
+  runpart(day, 2) if File.exists?("#{day}/part2")
+end
+
+def runpart(day, part)
+  print "  Part #{part}: "
+  if File.exists?("#{day}/part#{part}.input") then
+    puts `#{day}/part#{part} < #{day}/part#{part}.input`
+  elsif File.exists?("#{day}/input") then
+    puts `#{day}/part#{part} < #{day}/input`
+  else
+    puts "Missing input file"
+  end
+end
+
+if arg != "" then
+  if arg == "all" then
+    #run all
+    days = Dir.entries('.').select{|d|d=~/^day/}
+    days.each do |day|
+      run day
+    end
+  else
+    #run specified day
+    arg = arg.to_i
+    day = "day%02d" % arg
+    run day
+  end
+else
+  #run today
+  arg = Time.now.day
+  day = "day%02d" % arg
+  run day
+end

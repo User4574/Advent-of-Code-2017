@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.chars.map(&:to_i)
+l = input.length
+r = l / 2
+
+sum = 0
+
+(0...l).each do |i|
+  sum += input[i] if input[i] == input[(i + r) % l]
+end
+
+puts sum
