@@ -1,0 +1,16 @@
+h1. Advent of Code 2017
+
+These are my answers for the "2017 Advent of Code":http://adventofcode.com/2017
+
+h2. Travis build
+
+!https://travis-ci.org/User4574/Advent-of-Code-2017.svg?branch=master!:https://travis-ci.org/User4574/Advent-of-Code-2017
+
+h2. Running
+
+Use the run script in the root of the repo.
+
+- ./run all := Run code for all challenges answered
+- ./run <n> := Run the code for -day- millisecond n
+- ./run := Run the code for today
+
