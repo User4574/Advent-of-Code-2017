@@ -11,6 +11,6 @@ h2. Running
 Use the run script in the root of the repo.
 
 - ./run all := Run code for all challenges answered
-- ./run <n> := Run the code for -day- millisecond n
+- ./run n := Run the code for -day- millisecond *n*
 - ./run := Run the code for today
 
