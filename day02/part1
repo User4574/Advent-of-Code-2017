@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+cs = 0
+
+input = $stdin.readlines.map(&:chomp)
+
+input.each do |line|
+  nums = line.split.map(&:to_i)
+  cs += nums.max - nums.min
+end
+
+puts cs

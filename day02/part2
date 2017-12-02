@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+def findpair(nums)
+  (0...nums.length).each do |i|
+    (0...nums.length).each do |j|
+      next if j == i
+      pair = [nums[i], nums[j]]
+      return pair if pair.max % pair.min == 0
+    end
+  end
+end
+
+cs = 0
+
+input = $stdin.readlines.map(&:chomp)
+
+input.each do |line|
+  nums = line.split.map(&:to_i)
+  pair = findpair(nums)
+  cs += pair.max / pair.min
+end
+
+puts cs
