@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+def valid(line)
+  arr = line.split
+  (0...arr.length).each do |i|
+    (i+1...arr.length).each do |j|
+      return false if arr[i] == arr[j]
+    end
+  end
+  return true
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+puts input.select { |line|
+  valid(line)
+}.length
