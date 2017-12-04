@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.to_i
+
+n = 0
+n += 1 while ((n*2)+1)**2 < input
+
+s = ((n*2)+1)**2
+
+d = s
+d -= n
+d -= 2*n while d > input
+d += 2*n
+
+if d - n <= input then
+  puts d - input + n
+else
+  puts input - (d - 2*n) + n
+end
