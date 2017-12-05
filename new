@@ -1,0 +1,29 @@
+#!/bin/bash
+
+day=day$(date +%d)
+
+if [ "x$1" != "x" ] ; then
+  day=$(printf "day%02d" $1)
+fi
+
+if [ -d $day ] ; then
+  echo "Directory exists"
+  exit 1
+fi
+
+echo "Creating $day..."
+
+mkdir $day
+
+cat > $day/part1 <<EOT
+#!/usr/bin/env ruby
+
+input = gets.chomp
+input = \$stdin.readlines.map(&:chomp)
+EOT
+
+chmod +x $day/part1
+cp $day/part1 $day/part2
+
+echo "Give input:"
+cat > $day/input

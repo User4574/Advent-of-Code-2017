@@ -1,10 +1,12 @@
 h1. Advent of Code 2017
 
-These are my answers for the "2017 Advent of Code":http://adventofcode.com/2017
+These are my answers for the "2017 Advent of Code":http://adventofcode.com/2017.
 
 h2. Travis build
 
 !https://travis-ci.org/User4574/Advent-of-Code-2017.svg?branch=master!:https://travis-ci.org/User4574/Advent-of-Code-2017
+
+TODO: There should be some, like, tests or something.
 
 h2. Running
 
@@ -14,3 +16,9 @@ Use the run script in the root of the repo.
 - ./run n := Run the code for -day- millisecond *n*
 - ./run := Run the code for today
 
+h2. Starting a new day
+
+Use the new script to set up a skeleton directory for a new day.
+
+- ./new n := Create a skeleton for day *n*
+- ./new := Create a skeleton for today
