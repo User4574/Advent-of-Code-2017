@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+input = $stdin.readlines.map(&:chomp).map(&:to_i)
+pc = 0
+steps = 0
+
+while pc >= 0 && pc < input.length do
+  newpc = pc + input[pc]
+  input[pc] += 1
+  pc = newpc
+  steps += 1
+end
+
+puts steps
