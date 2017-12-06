@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.split("\t").map(&:to_i)
+
+def index_of_max(arr)
+  idx = 0
+  max = 0
+
+  (0...arr.length).each do |i|
+    if arr[i] > max then
+      idx = i
+      max = arr[i]
+    end
+  end
+
+  return idx
+end
+
+def redistribute(arr, idx)
+  new = arr.dup
+  len = new.length
+
+  blks = new[idx]
+  new[idx] = 0
+
+  i = idx
+  while blks > 0 do
+    i = (i + 1) % len
+    new[i] += 1
+    blks -= 1
+  end
+
+  return new
+end
+
+previous = []
+state = input.dup
+steps = 0
+
+until previous.include?(state) do
+  newstate = redistribute(state, index_of_max(state))
+  previous << state
+  state = newstate
+  steps += 1
+end
+
+puts steps
