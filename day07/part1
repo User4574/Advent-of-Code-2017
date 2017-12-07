@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+
+class Array
+  def to_empty_hash
+    h = {}
+    self.each do |el|
+      h[el] = nil
+    end
+    return h
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+hash = {}
+
+input.each do |line|
+  me, them = line.split(" -> ")
+  _, name, weight = me.match(/([a-z]+) \((\d+)\)/).to_a
+  children = them.nil? ? [] : them.split(", ")
+
+  hash[name.intern] = {
+    :weight => weight,
+    :remove => false,
+    :children => children.map(&:intern).to_empty_hash
+  }
+end
+
+hash.each do |key, value|
+  value[:children].each do |ckey, cvalue|
+    if cvalue.nil? then
+      value[:children][ckey] = hash[ckey].dup
+      hash[ckey][:remove] = true
+    end
+  end
+end
+
+hash = hash.reject { |key, value|
+  value[:remove]
+}
+
+puts hash.keys.first
