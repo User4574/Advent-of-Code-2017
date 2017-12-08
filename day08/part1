@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+input = $stdin.readlines.map(&:chomp)
+h = {}
+
+input.each do |line|
+  cmd, cond = line.split(' if ')
+
+  cmda = cmd.split
+  reg = cmda[0]
+  h[reg] = 0 if h[reg].nil?
+  chg = (cmda[1] == 'inc' ? cmda[2].to_i : -cmda[2].to_i)
+
+  conda = cond.split
+  h[conda[0]] = 0 if h[conda[0]].nil?
+  go = case conda[1]
+       when '<'
+         h[conda[0]] < conda[2].to_i
+       when '<='
+         h[conda[0]] <= conda[2].to_i
+       when '=='
+         h[conda[0]] == conda[2].to_i
+       when '>='
+         h[conda[0]] >= conda[2].to_i
+       when '>'
+         h[conda[0]] > conda[2].to_i
+       when '!='
+         h[conda[0]] != conda[2].to_i
+       end
+  h[reg] += chg if go
+end
+
+puts h.to_a.map(&:last).max
