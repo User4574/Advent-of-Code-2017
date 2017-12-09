@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.chars
+
+ptr = 0
+garbage = false
+escape = false
+lvl = 0
+chars = 0
+
+input.each do |ch|
+  if escape then
+    escape = false
+    next
+  end
+  
+  if ch == '!' then
+    escape = true
+    next
+  end
+
+  if garbage then
+    if ch == '>' then
+      garbage = false
+    else
+      chars += 1
+    end
+    next
+  end
+
+  if ch == '<' then
+    garbage = true
+    next
+  end
+end
+
+puts chars

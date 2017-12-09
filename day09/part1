@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.chars
+
+ptr = 0
+garbage = false
+escape = false
+lvl = 0
+score = 0
+
+input.each do |ch|
+  if escape then
+    escape = false
+    next
+  end
+  
+  if ch == '!' then
+    escape = true
+    next
+  end
+
+  if garbage then
+    garbage = false if ch == '>'
+    next
+  end
+
+  if ch == '<' then
+    garbage = true
+    next
+  end
+
+  if ch == '{' then
+    lvl += 1
+    score += lvl
+    next
+  end
+
+  if ch == '}' then
+    lvl -= 1
+    next
+  end
+end
+
+puts score
