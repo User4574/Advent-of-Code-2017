@@ -23,7 +23,4 @@ input = \$stdin.readlines.map(&:chomp)
 EOT
 
 chmod +x $day/part1
-cp $day/part1 $day/part2
-
-echo "Give input:"
-cat > $day/input
+touch $day/input
