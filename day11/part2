@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+def optimise_ortho_meta(loc, left, right, center)
+  opt = [loc[left], loc[right]].min
+  loc[left] -= opt
+  loc[right] -= opt
+  loc[center] += opt
+  return opt > 0
+end
+
+def optimise_para(loc, forth, back)
+  return false if loc[forth].zero? || loc[back].zero?
+
+  if loc[forth] > loc[back] then
+    loc[forth] = loc[forth] - loc[back]
+    loc[back] = 0
+    return true
+  end
+
+  if loc[back] > loc[forth] then
+    loc[back] = loc[back] - loc[forth]
+    loc[forth] = 0
+    return true
+  end
+
+  loc[forth] = 0
+  loc[back] = 0
+  return true
+end
+
+input = gets.chomp.split(',')
+
+fl = {
+  n:  0,
+  ne: 0,
+  se: 0,
+  s:  0,
+  sw: 0,
+  nw: 0
+}
+
+max = 0
+
+input.each do |dir|
+  fl[dir.intern] += 1
+
+  l = fl.dup
+  changed = true
+  while changed do
+    changed = false
+
+    changed |= optimise_ortho_meta(l, :ne, :nw, :n)
+    changed |= optimise_ortho_meta(l, :se, :sw, :s)
+
+    changed |= optimise_ortho_meta(l, :n, :se, :ne)
+    changed |= optimise_ortho_meta(l, :n, :sw, :nw)
+    changed |= optimise_ortho_meta(l, :s, :ne, :se)
+    changed |= optimise_ortho_meta(l, :s, :nw, :sw)
+
+    changed |= optimise_para(l, :nw, :se)
+    changed |= optimise_para(l, :n, :s)
+    changed |= optimise_para(l, :ne, :sw)
+  end
+
+  d = l.values.inject(:+)
+  max = d if d > max
+end
+
+puts max
