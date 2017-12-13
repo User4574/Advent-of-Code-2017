@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+def group_members(p)
+  group = [p]
+  visited = []
+  queue = [p]
+
+  until queue.empty? do
+    here = queue.shift
+    visited << here
+    $pipes[here].each do |p|
+      group << p
+      queue << p unless visited.include?(p)
+    end
+  end
+
+  return group.uniq
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+$pipes = []
+
+input.each do |line|
+  me, them = line.split(' <-> ')
+  me = me.to_i
+  them = them.split(', ').map(&:to_i)
+  
+  $pipes[me] = [] if $pipes[me].nil?
+  them.each do |p|
+    $pipes[me] << p
+  end
+end
+
+procs = (0...$pipes.length).to_a
+groups = 0
+
+until procs.empty? do
+  agroup = group_members(procs.first)
+  groups += 1
+  procs -= agroup
+end
+
+puts groups

@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+input = $stdin.readlines.map(&:chomp)
+
+pipes = []
+
+input.each do |line|
+  me, them = line.split(' <-> ')
+  me = me.to_i
+  them = them.split(', ').map(&:to_i)
+  
+  pipes[me] = [] if pipes[me].nil?
+  them.each do |p|
+    pipes[me] << p
+  end
+end
+
+group = [0]
+visited = []
+queue = [0]
+
+until queue.empty? do
+  here = queue.shift
+  visited << here
+  pipes[here].each do |p|
+    group << p
+    queue << p unless visited.include?(p)
+  end
+end
+
+p group.uniq.length
