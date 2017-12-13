@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+class Firewall
+  class Layer
+    def initialize(range)
+      @period = (range - 1) * 2
+    end
+
+    def will_capture_at?(time)
+      return time % @period == 0
+    end
+  end
+
+  def initialize
+    @layers = []
+  end
+
+  def add_layer!(depth, range)
+    @layers[depth] = Layer.new(range)
+  end
+
+  def will_capture_at?(time)
+    (0...@layers.length).each do |i|
+      next if @layers[i].nil?
+      return true if @layers[i].will_capture_at?(time + i)
+    end
+    return false
+  end
+end
+
+
+input = $stdin.readlines.map(&:chomp).map{|l|l.split(': ').map(&:to_i)}
+lcm = input.map(&:last).inject(1, :lcm)
+delay = 0
+
+loop do
+  if delay > lcm then
+    puts "Went past lcm"
+    exit
+  end
+
+  firewall = Firewall.new
+
+  input.each do |line|
+    firewall.add_layer!(line[0], line[1])
+  end
+
+  break unless firewall.will_capture_at?(delay)
+
+  delay += 1
+end
+
+puts delay

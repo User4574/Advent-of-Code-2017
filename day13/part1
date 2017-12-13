@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+class Firewall
+  class Layer
+    attr_reader :range
+
+    def initialize(range)
+      @scanner_location = 0
+      @scanner_velocity = 1
+      @range = range
+    end
+
+    def move_scanner!
+      if @scanner_location == (@range - 1) then
+        @scanner_velocity = -1
+      elsif @scanner_location == 0 then
+        @scanner_velocity = 1
+      end
+
+      @scanner_location += @scanner_velocity
+    end
+
+    def capturing?
+      return @scanner_location == 0
+    end
+  end
+
+  def initialize
+    @layers = []
+  end
+
+  def add_layer!(depth, range)
+    @layers[depth] = Layer.new(range)
+  end
+
+  def total_depth
+    return @layers.length
+  end
+
+  def severity(loc)
+    return 0 if @layers[loc].nil?
+    return 0 unless @layers[loc].capturing?
+    return loc * @layers[loc].range
+  end
+
+  def tick!
+    @layers.compact.each(&:move_scanner!)
+  end
+end
+
+
+input = $stdin.readlines.map(&:chomp)
+
+firewall = Firewall.new
+
+input.each do |line|
+  depth, range = line.split(': ').map(&:to_i)
+  firewall.add_layer!(depth, range)
+end
+
+myloc = -1
+total_severity = 0
+
+while myloc < firewall.total_depth do
+  myloc += 1
+  total_severity += firewall.severity(myloc)
+  firewall.tick!
+end
+
+puts total_severity
