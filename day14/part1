@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+
+class KnotHash
+  def initialize(text)
+    @list = (0...256).to_a
+    @skip = 0
+    @ptr = 0
+    @input = text.chars.map(&:ord) + [17,31,73,47,23]
+  end
+
+  def run(rounds = 64)
+    rounds.times do
+      @input.each do |len|
+        reverse_sublist!(len)
+      end
+    end
+    return self
+  end
+
+  def compress
+    p = 0
+    out = []
+
+    16.times do
+      out << @list[p...p+16].inject(:^)
+      p += 16
+    end
+
+    return out
+  end
+
+  def hexdigest
+    dense = self.compress
+    hex = dense.map { |i| "%02x" % i }
+    return hex.join
+  end
+
+  def to_a
+    return @list
+  end
+
+  def to_s
+    l = @list.dup
+    l[@ptr] = "[#{l[@ptr]}]"
+    return "#{l.join(' ')} skip = #{@skip}"
+  end
+
+  private
+
+  def reverse_sublist!(len)
+    if @ptr + len > @list.length then
+      reverse_wrapping_sublist!(len)
+    else
+      reverse_contained_sublist!(len)
+    end
+
+    inc_ptr!(len)
+  end
+
+  def reverse_wrapping_sublist!(len)
+    dbl = @list.dup + @list.dup
+    sublist = dbl[@ptr...@ptr+len].reverse
+
+    (@ptr...@ptr+len).each do |i|
+      @list[i % @list.length] = sublist[i-@ptr]
+    end
+  end
+
+  def reverse_contained_sublist!(len)
+    sublist = @list[@ptr...@ptr+len].reverse
+
+    (@ptr...@ptr+len).each do |i|
+      @list[i] = sublist[i-@ptr]
+    end
+  end
+
+  def inc_ptr!(len)
+    @ptr += len
+    @ptr += @skip
+    @ptr = @ptr % @list.length
+    @skip += 1
+  end
+end
+
+input = gets.chomp
+sum = 0
+
+(0..127).each do |r|
+  hash = KnotHash.new("#{input}-#{r}").run
+  sum += hash.hexdigest.to_i(16).to_s(2).count('1')
+end
+
+puts sum
