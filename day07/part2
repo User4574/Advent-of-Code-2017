@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+
+class Array
+  def to_empty_hash
+    h = {}
+    self.each do |el|
+      h[el] = nil
+    end
+    return h
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+hash = {}
+
+input.each do |line|
+  me, them = line.split(" -> ")
+  _, name, weight = me.match(/([a-z]+) \((\d+)\)/).to_a
+  children = them.nil? ? [] : them.split(", ")
+
+  hash[name.intern] = {
+    :weight => weight.to_i,
+    :remove => false,
+    :children => children.map(&:intern).to_empty_hash
+  }
+end
+
+hash.each do |key, value|
+  value[:children].each do |ckey, cvalue|
+    if cvalue.nil? then
+      value[:children][ckey] = hash[ckey].dup
+      hash[ckey][:remove] = true
+    end
+  end
+end
+
+hash = hash.reject { |key, value|
+  value[:remove]
+}
+
+here = nil
+newhere = hash[hash.keys.first]
+
+def weight(prog)
+  return prog[:weight] if prog[:children].empty?
+  chilweight = 0
+  prog[:children].each do |k, v|
+    chilweight += weight(v)
+  end
+  return prog[:weight] + chilweight
+end
+
+def is_balanced?(tower)
+  ws = []
+  tower[:children].each do |k, v|
+    ws << weight(v)
+  end
+  return ws.uniq.length == 1
+end
+
+while here != newhere do
+  here = newhere
+  here[:children].each do |key, value|
+    unless is_balanced?(value) then
+      newhere = value
+    end
+  end
+end
+
+ws = []
+here[:children].each do |k, v|
+  ws << weight(v)
+end
+
+goodweight = nil
+ws.each do |w|
+  goodweight = w if ws.count(w) != 1
+end
+
+here[:children].each do |k, v|
+  if weight(v) == goodweight then
+    next
+  else
+    diff = weight(v) - goodweight
+    puts v[:weight] - diff
+    break
+  end
+end
