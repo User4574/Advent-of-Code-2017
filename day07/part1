@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'pp'
-
 class Array
   def to_empty_hash
     h = {}
