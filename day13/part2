@@ -30,24 +30,13 @@ end
 
 
 input = $stdin.readlines.map(&:chomp).map{|l|l.split(': ').map(&:to_i)}
-lcm = input.map(&:last).inject(1, :lcm)
-delay = 0
 
-loop do
-  if delay > lcm then
-    puts "Went past lcm"
-    exit
-  end
-
-  firewall = Firewall.new
-
-  input.each do |line|
-    firewall.add_layer!(line[0], line[1])
-  end
-
-  break unless firewall.will_capture_at?(delay)
-
-  delay += 1
+firewall = Firewall.new
+input.each do |line|
+  firewall.add_layer!(line[0], line[1])
 end
+
+delay = 0
+delay += 1 while firewall.will_capture_at?(delay)
 
 puts delay
