@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+def turn(v)
+  return case v
+  when [0, 1]
+    [1, 0]
+  when [1, 0]
+    [0, -1]
+  when [0, -1]
+    [-1, 0]
+  when [-1, 0]
+    [0, 1]
+  end
+end
+
+input = gets.chomp.to_i
+
+wid = 31
+hei = 31
+
+r = (hei + 1) / 2
+c = (wid + 1) / 2
+
+going = [0, 1]
+
+grid = []
+hei.times { grid << ([0] * wid) }
+
+grid[r][c] = 1
+
+loop do
+  r += going[0]
+  c += going[1]
+
+  grid[r][c] =
+    grid[r][c+1]   +
+    grid[r+1][c+1] +
+    grid[r+1][c]   +
+    grid[r+1][c-1] +
+    grid[r][c-1]   +
+    grid[r-1][c-1] +
+    grid[r-1][c]   +
+    grid[r-1][c+1]
+
+  break if grid[r][c] > input
+  try = turn(going)
+  going = try if grid[r+try[0]][c+try[1]] == 0
+end
+
+puts grid[r][c]
