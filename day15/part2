@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+class Generator
+  def initialize(iv, factor, divisor)
+    @value = iv
+    @factor = factor
+    @divisor = divisor
+  end
+
+  def next
+    n = @value
+    loop do
+      n = (n * @factor) % 2147483647
+      break if n % @divisor == 0
+    end
+    @value = n
+    return n
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+ga = Generator.new(input[0].split[4].to_i, 16807, 4)
+gb = Generator.new(input[1].split[4].to_i, 48271, 8)
+
+matches = 0
+
+Mask = 2**16
+
+5_000_000.times do
+  a = ga.next % Mask
+  b = gb.next % Mask
+  matches += 1 if a == b
+end
+
+p matches
