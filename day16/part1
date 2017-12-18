@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.split(',')
+
+line = %w( a b c d e f g h i j k l m n o p )
+
+input.each do |istr|
+  case istr[0]
+  when 's'
+    n = istr[1..-1].to_i
+    line = line[-n..-1] + line[0..-n-1]
+  when 'x'
+    ns = istr[1..-1].split('/').map(&:to_i)
+    t = line[ns[0]]
+    line[ns[0]] = line[ns[1]]
+    line[ns[1]] = t
+  when 'p'
+    ps = istr[1..-1].split('/')
+    i0 = line.index(ps[0])
+    i1 = line.index(ps[1])
+    line[i0] = ps[1]
+    line[i1] = ps[0]
+  end
+end
+
+puts line.join
