@@ -1,0 +1,90 @@
+#!/usr/bin/env ruby
+
+def valof(reg_file, reg_or_int)
+  if reg_or_int >= 'a' && reg_or_int <= 'z' then
+    return reg_file[reg_or_int] || 0
+  end
+  return reg_or_int.to_i
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+reg0 = {"p" => 0}
+reg1 = {"p" => 1}
+pc0 = 0
+pc1 = 0
+q0 = []
+q1 = []
+running0 = true
+running1 = true
+count = 0
+
+loop do
+  running0 = false if pc0 < 0 || pc0 >= input.length
+  running1 = false if pc1 < 0 || pc1 >= input.length
+
+  if running0 then
+    istr = input[pc0].split
+    case istr[0]
+    when 'snd'
+      q1 << valof(reg0, istr[1])
+      count += 1
+    when 'set'
+      reg0[istr[1]] = valof(reg0, istr[2])
+    when 'add'
+      reg0[istr[1]] = valof(reg0, istr[1]) + valof(reg0, istr[2])
+    when 'mul'
+      reg0[istr[1]] = valof(reg0, istr[1]) * valof(reg0, istr[2])
+    when 'mod'
+      reg0[istr[1]] = valof(reg0, istr[1]) % valof(reg0, istr[2])
+    when 'rcv'
+      if q0.empty? then
+        pc0 -= 1
+      else
+        reg0[istr[1]] = q0.shift
+      end
+    when 'jgz'
+      if valof(reg0, istr[1]) > 0 then
+        pc0 += valof(reg0, istr[2])
+        pc0 -= 1
+      end
+    end
+    pc0 += 1
+  end
+
+  if running1 then
+    istr = input[pc1].split
+    case istr[0]
+    when 'snd'
+      q0 << valof(reg1, istr[1])
+    when 'set'
+      reg1[istr[1]] = valof(reg1, istr[2])
+    when 'add'
+      reg1[istr[1]] = valof(reg1, istr[1]) + valof(reg1, istr[2])
+    when 'mul'
+      reg1[istr[1]] = valof(reg1, istr[1]) * valof(reg1, istr[2])
+    when 'mod'
+      reg1[istr[1]] = valof(reg1, istr[1]) % valof(reg1, istr[2])
+    when 'rcv'
+      if q1.empty? then
+        pc1 -= 1
+      else
+        reg1[istr[1]] = q1.shift
+      end
+    when 'jgz'
+      if valof(reg1, istr[1]) > 0 then
+        pc1 += valof(reg1, istr[2])
+        pc1 -= 1
+      end
+    end
+    pc1 += 1
+  end
+
+  break if !running0 && !running1
+  break if input[pc0].split[0] == 'rcv' && q0.empty? && !running1
+  break if input[pc1].split[0] == 'rcv' && q1.empty? && !running0
+  break if input[pc0].split[0] == 'rcv' && q0.empty? &&
+           input[pc1].split[0] == 'rcv' && q1.empty?
+end
+
+puts count
