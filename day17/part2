@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+input = gets.chomp.to_i
+
+buf = [0]
+pos = 0
+
+50_000_000.times do |num|
+  p num if num % 100000 == 0
+  pos = ((pos + input) % buf.length) + 1
+  buf.insert(pos, num + 1)
+end
+
+puts buf[buf.index(0) + 1]
