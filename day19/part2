@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+def turn_left(vector)
+  return case vector
+  when [1, 0]
+    [0, 1]
+  when [0, 1]
+    [-1, 0]
+  when [-1, 0]
+    [0, -1]
+  when [0, -1]
+    [1, 0]
+  end
+end
+
+def turn_right(vector)
+  return case vector
+  when [1, 0]
+    [0, -1]
+  when [0, -1]
+    [-1, 0]
+  when [-1, 0]
+    [0, 1]
+  when [0, 1]
+    [1, 0]
+  end
+end
+
+def turn(map, vector, row, col)
+  lvec = turn_left(vector)
+  rvec = turn_right(vector)
+
+  lrow = row + lvec[0]
+  lcol = col + lvec[1]
+
+  rrow = row + rvec[0]
+  rcol = col + rvec[1]
+
+  if map[lrow][lcol] == ' ' then
+    return rvec
+  else
+    return lvec
+  end
+end
+
+input = $stdin.readlines.map(&:chomp).map(&:chars).map(&:to_a)
+
+row = 0
+col = input[0].index('|')
+vec = [1, 0]
+steps = 0
+
+loop do
+  row += vec[0]
+  col += vec[1]
+  steps += 1
+  this = input[row][col]
+  if this == ' ' then
+    break
+  elsif this == '+' then
+    vec = turn(input, vec, row, col)
+  end
+end
+
+puts steps
