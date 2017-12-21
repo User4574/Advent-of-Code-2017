@@ -28,7 +28,6 @@ loop do
     case istr[0]
     when 'snd'
       q1 << valof(reg0, istr[1])
-      count += 1
     when 'set'
       reg0[istr[1]] = valof(reg0, istr[2])
     when 'add'
@@ -57,6 +56,7 @@ loop do
     case istr[0]
     when 'snd'
       q0 << valof(reg1, istr[1])
+      count += 1
     when 'set'
       reg1[istr[1]] = valof(reg1, istr[2])
     when 'add'
