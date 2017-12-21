@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+require 'scanf'
+
+class Array
+  def find_all_indices(elt)
+    return self.each_index.select { |i| self[i] == elt }
+  end
+end
+
+class Vector
+  attr_accessor :x, :y, :z
+
+  def initialize(array)
+    @x = array[0] || 0
+    @y = array[1] || 0
+    @z = array[2] || 0
+  end
+
+  def add!(vector)
+    @x += vector.x
+    @y += vector.y
+    @z += vector.z
+  end
+
+  def to_s
+    return "<#{@x},#{@y},#{@z}>"
+  end
+end
+
+class Particle
+  attr_accessor :pos, :vel, :acc
+
+  def initialize(p, v, a)
+    @pos = Vector.new(p)
+    @vel = Vector.new(v)
+    @acc = Vector.new(a)
+  end
+
+  def update!
+    @vel.add!(@acc)
+    @pos.add!(@vel)
+  end
+
+  def distance
+    return @pos.x.abs + @pos.y.abs + @pos.z.abs
+  end
+
+  def to_s
+    return "p=#{@pos}, v=#{@vel}, a=#{@acc}"
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+particles = input.map do |line|
+  px, py, pz, vx, vy, vz, ax, ay, az = 
+    line.scanf("p=<%d,%d,%d>, v=<%d,%d,%d>, a=<%d,%d,%d>")
+  Particle.new([px, py, pz], [vx, vy, vz], [ax, ay, az])
+end
+
+this = []
+times = 0
+
+THE_LONG_RUN = 1000
+
+loop do
+  ds = particles.map(&:distance)
+  min = ds.min
+  is = ds.find_all_indices(min)
+
+  if is == this then
+    times += 1
+  else
+    this = is
+    times = 1
+  end
+
+  break if times == THE_LONG_RUN
+
+  particles.each(&:update!)
+end
+
+p this[0]
