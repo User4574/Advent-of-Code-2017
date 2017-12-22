@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+
+class Grid
+  def self.from_s(str)
+    out = []
+    str.split('/').each do |row|
+      out << row.chars.map{|x| x == '#'}
+    end
+    return Grid.new(out)
+  end
+
+  def self.join(grids)
+    out = []
+    l = grids[0][0].size
+    grids.each_with_index do |row, i|
+      (0...l).each do |j|
+        out[(i*l)+j] = [] if out[(i*l)+j].nil?
+      end
+      row.each do |grid|
+        grid.to_a.each_with_index do |srow, j|
+          out[(i*l)+j] += srow
+        end
+      end
+    end
+    return Grid.new(out)
+  end
+
+  def initialize(arr = [[false, true, false], [false, false, true], [true, true, true]])
+    @grid = arr
+  end
+
+  def size
+    return @grid.length
+  end
+
+  def split
+    out = []
+    if @grid.length.even? then
+      (0...@grid.length).step(2).each do |r|
+        row = []
+        (0...@grid.length).step(2).each do |c|
+          row << Grid.new([
+            [@grid[r][c], @grid[r][c+1]],
+            [@grid[r+1][c], @grid[r+1][c+1]]
+          ])
+        end
+        out << row
+      end
+    else
+      (0...@grid.length).step(3).each do |r|
+        row = []
+        (0...@grid.length).step(3).each do |c|
+          row << Grid.new([
+            [@grid[r][c], @grid[r][c+1], @grid[r][c+2]],
+            [@grid[r+1][c], @grid[r+1][c+1], @grid[r+1][c+2]],
+            [@grid[r+2][c], @grid[r+2][c+1], @grid[r+2][c+2]]
+          ])
+        end
+        out << row
+      end
+    end
+    return out
+  end
+
+  def flip
+    return Grid.new(@grid.map(&:reverse))
+  end
+
+  def rot
+    return Grid.new(@grid.transpose.map(&:reverse))
+  end
+
+  def liveness
+    return @grid.flatten.count(true)
+  end
+
+  def to_s
+    out = []
+    @grid.each do |row|
+      out << row.map{|x| x ? '#' : '.'}.join
+    end
+    return out.join('/')
+  end
+
+  def to_a
+    return @grid
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+map = input.map{|line| line.split(' => ')}.to_h
+
+grid = Grid.new
+
+5.times do
+  grids = grid.split
+  new = grids.map do |row|
+    row.map do |grid|
+      if !map[grid.to_s].nil? then
+        Grid.from_s(map[grid.to_s])
+      elsif !map[grid.rot.to_s].nil? then
+        Grid.from_s(map[grid.rot.to_s])
+      elsif !map[grid.rot.rot.to_s].nil? then
+        Grid.from_s(map[grid.rot.rot.to_s])
+      elsif !map[grid.rot.rot.rot.to_s].nil? then
+        Grid.from_s(map[grid.rot.rot.rot.to_s])
+
+      elsif !map[grid.flip.to_s].nil? then
+        Grid.from_s(map[grid.flip.to_s])
+      elsif !map[grid.flip.rot.to_s].nil? then
+        Grid.from_s(map[grid.flip.rot.to_s])
+      elsif !map[grid.flip.rot.rot.to_s].nil? then
+        Grid.from_s(map[grid.flip.rot.rot.to_s])
+      elsif !map[grid.flip.rot.rot.rot.to_s].nil? then
+        Grid.from_s(map[grid.flip.rot.rot.rot.to_s])
+      end
+    end
+  end
+  grid = Grid.join(new)
+end
+
+puts grid.liveness
