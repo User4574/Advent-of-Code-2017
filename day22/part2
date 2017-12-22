@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+def turn_left(vector)
+  return case vector
+  when [1, 0]
+    [0, 1]
+  when [0, 1]
+    [-1, 0]
+  when [-1, 0]
+    [0, -1]
+  when [0, -1]
+    [1, 0]
+  end
+end
+
+def turn_right(vector)
+  return case vector
+  when [1, 0]
+    [0, -1]
+  when [0, -1]
+    [-1, 0]
+  when [-1, 0]
+    [0, 1]
+  when [0, 1]
+    [1, 0]
+  end
+end
+
+input = $stdin.readlines.map(&:chomp)
+size = input.length
+infinity = 1000
+
+map = []
+
+infinity.times do
+  map << ([:clean]*((2*infinity)+size))
+end
+
+input.each do |r|
+  map << ([:clean]*infinity) + r.chars.map{|x| x == '#' ? :infected : :clean} + ([:clean]*infinity)
+end
+
+infinity.times do
+  map << ([:clean]*((2*infinity)+size))
+end
+
+row = infinity + (size + 1)/2 - 1
+col = infinity + (size + 1)/2 - 1
+dir = [-1, 0]
+infections = 0
+
+10_000_000.times do
+  case map[row][col]
+  when :clean
+    dir = turn_left(dir)
+    map[row][col] = :weakened
+  when :weakened
+    map[row][col] = :infected
+    infections += 1
+  when :infected
+    dir = turn_right(dir)
+    map[row][col] = :flagged
+  when :flagged
+    dir = turn_right(turn_right(dir))
+    map[row][col] = :clean
+  end
+  row += dir[0]
+  col += dir[1]
+end
+
+puts infections
