@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+def valof(reg_file, reg_or_int)
+  if reg_or_int >= 'a' && reg_or_int <= 'z' then
+    return reg_file[reg_or_int] || 0
+  end
+  return reg_or_int.to_i
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+reg = {'a' => 1}
+pc = 0
+
+loop do
+  break if pc < 0 || pc >= input.length
+  istr = input[pc].split
+  case istr[0]
+  when 'set'
+    reg[istr[1]] = valof(reg, istr[2])
+  when 'sub'
+    reg[istr[1]] = valof(reg, istr[1]) - valof(reg, istr[2])
+  when 'mul'
+    reg[istr[1]] = valof(reg, istr[1]) * valof(reg, istr[2])
+  when 'jnz'
+    if valof(reg, istr[1]) != 0 then
+      pc += valof(reg, istr[2])
+      pc -= 1
+    end
+  end
+  pc += 1
+end
+
+puts reg['h']

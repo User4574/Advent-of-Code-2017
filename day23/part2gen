@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+def gen_label(here, there)
+  return "label_#{here}_#{there.gsub(/-/, '_')}"
+end
+
+input = $stdin.readlines.map(&:chomp)
+lines = []
+labels = {}
+
+input.each_with_index do |line, i|
+  istr = line.split
+  case istr[0]
+  when 'set'
+    lines << "#{istr[1]} = #{istr[2]};"
+  when 'sub'
+    lines << "#{istr[1]} -= #{istr[2]};"
+  when 'mul'
+    lines << "#{istr[1]} *= #{istr[2]};"
+  when 'jnz'
+    lab = gen_label(i, istr[2])
+    lines << "if (#{istr[1]}) goto #{lab};"
+    jmp = istr[2].to_i
+    labels[i+jmp] = [] if labels[i+jmp].nil?
+    labels[i+jmp] << "#{lab}:"
+  end
+end
+
+labels.keys.sort.reverse.each do |i|
+  labels[i].each do |lab|
+    lines.insert(i, lab)
+  end
+end
+
+puts <<EOT
+#include <stdio.h>
+
+void main() {
+  int
+    a = 1,
+    b = 0,
+    c = 0,
+    d = 0,
+    e = 0,
+    f = 0,
+    g = 0,
+    h = 0;
+
+// BEGIN GENERATED CODE BLOCK
+
+EOT
+
+lines.each do |line|
+  puts "#{line[0] == "l" ? "" : "  "}  #{line}"
+end
+
+puts <<EOT
+
+//END GENERATED CODE BLOCK
+
+  printf("%d\\n", h);
+}
+EOT
