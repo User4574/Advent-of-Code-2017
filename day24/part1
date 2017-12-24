@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+input = $stdin.readlines.map(&:chomp).map{|c| c.split('/').map(&:to_i)}
+
+class BridgeFactory
+  def initialize(pieces, bridge = [], be = 0)
+    @pieces = pieces.dup
+    @bridge = bridge.dup
+    @be = be
+    @complete = false
+  end
+
+  def complete?
+    return @complete
+  end
+
+  def build_iter
+    @complete = true
+    nexts = get_nexts
+    return [self] + nexts.map do |nxt|
+      nbe = nxt[0] == nxt[1] ? nxt[0] : (nxt - [@be])[0]
+      BridgeFactory.new(@pieces - [nxt], @bridge + [nxt], nbe)
+    end
+  end
+
+  def strength
+    return @bridge.flatten.inject(:+) || 0
+  end
+
+  private
+
+  def get_nexts
+    return @pieces.select do |piece|
+      piece[0] == @be || piece[1] == @be
+    end
+  end
+end
+
+bfs = [BridgeFactory.new(input)]
+
+loop do
+  new_bfs = []
+  bfs.each do |bf|
+    if bf.complete? then
+      new_bfs << bf
+    else
+      new_bfs += bf.build_iter
+    end
+  end
+  break if new_bfs.map(&:complete?).all?
+  bfs = new_bfs
+end
+
+puts bfs.map(&:strength).max
