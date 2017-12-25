@@ -27,6 +27,12 @@ class BridgeFactory
     return @bridge.flatten.inject(:+) || 0
   end
 
+  def to_s
+    return "(#{strength})\t\"" + @bridge.map {|p|
+      p.join('/')
+    }.join('--') + "\""
+  end
+
   private
 
   def get_nexts
