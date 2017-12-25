@@ -43,18 +43,20 @@ class BridgeFactory
 end
 
 bfs = [BridgeFactory.new(input)]
+maxs = 0
 
 loop do
   new_bfs = []
   bfs.each do |bf|
     if bf.complete? then
-      new_bfs << bf
+      s = bf.strength
+      maxs = s if s > maxs
     else
       new_bfs += bf.build_iter
     end
   end
-  break if new_bfs.map(&:complete?).all?
+  break if new_bfs.empty?
   bfs = new_bfs
 end
 
-puts bfs.map(&:strength).max
+puts maxs
