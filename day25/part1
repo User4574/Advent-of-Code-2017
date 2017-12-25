@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+INFINITY = 10001
+
+class State
+  def self.from_input(input)
+    this = input.shift.split[2][0]
+    input.shift
+    zero = [
+      input.shift.split[4][0].to_i,
+      input.shift.split[6][0] == 'r' ? 1 : -1,
+      input.shift.split[4][0]
+    ]
+    input.shift
+    one = [
+      input.shift.split[4][0].to_i,
+      input.shift.split[6][0] == 'r' ? 1 : -1,
+      input.shift.split[4][0]
+    ]
+    return [this, State.new(zero, one)]
+  end
+
+  attr_reader :zero, :one
+
+  def initialize(zero, one)
+    @zero = zero
+    @one = one
+  end
+end
+
+class Machine
+  def initialize(start, states)
+    @state = start
+    @states = states
+    @tape = [0] * INFINITY
+    @cursor = (INFINITY - 1) / 2
+  end
+
+  def step!
+    st = @states[@state]
+    pro = @tape[@cursor].zero? ? st.zero : st.one
+    @tape[@cursor] = pro[0]
+    @cursor += pro[1]
+    @state = pro[2]
+  end
+
+  def checksum
+    return @tape.count(1)
+  end
+end
+
+input = $stdin.readlines.map(&:strip) - [""]
+
+bgn = input.shift.split[3][0]
+dnc = input.shift.split[5].to_i
+
+states = []
+(0...input.length).step(9) do |i|
+  states << State.from_input(input[i...i+9])
+end
+states = states.to_h
+
+m = Machine.new(bgn, states)
+dnc.times do
+  m.step!
+end
+
+puts m.checksum
