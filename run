@@ -23,9 +23,9 @@ end
 if arg != "" then
   if arg == "all" then
     #run all
-    days = Dir.entries('.').select{|d|d=~/^day/}
-    days.each do |day|
-      run day
+    days = Dir.entries('.').select{|d|d=~/^day/}.map{|d|d.gsub(/day/, '').to_i}
+    days.sort.each do |day|
+      run "day%02d" % day
     end
   else
     #run specified day
