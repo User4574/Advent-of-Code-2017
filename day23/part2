@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require 'prime'
+
+def valof(reg_file, reg_or_int)
+  if reg_or_int >= 'a' && reg_or_int <= 'z' then
+    return reg_file[reg_or_int] || 0
+  end
+  return reg_or_int.to_i
+end
+
+input = $stdin.readlines.map(&:chomp)
+
+reg = {'a' => 1}
+pc = 0
+
+loop do
+  break if pc > 7
+
+  istr = input[pc].split
+  case istr[0]
+  when 'set'
+    reg[istr[1]] = valof(reg, istr[2])
+  when 'sub'
+    reg[istr[1]] = valof(reg, istr[1]) - valof(reg, istr[2])
+  when 'mul'
+    reg[istr[1]] = valof(reg, istr[1]) * valof(reg, istr[2])
+  end
+  pc += 1
+end
+
+n = reg['b']
+stop = reg['c']
+diff = -input[-2].split.last.to_i
+h = 0
+
+# What the horrible program is doing is counting the number of
+# composite numbers there are starting with #{b} and incrementing
+# by #{diff} until and including #{stop}.
+
+loop do
+  break if n > stop
+  h += 1 unless Prime::prime?(n)
+  n += diff
+end
+
+puts h

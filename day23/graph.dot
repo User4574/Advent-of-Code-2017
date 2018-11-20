@@ -1,0 +1,80 @@
+digraph graff {
+  A  [label="set b 99"]
+  B  [label="set c b"]
+  C  [label="jnz a 2"]
+  D  [label="jnz 1 5"]
+  E  [label="mul b 100"]
+  F  [label="sub b -100000"]
+  G  [label="set c b"]
+  H  [label="sub c -17000"]
+  I  [label="set f 1"]
+  J  [label="set d 2"]
+  K  [label="set e 2"]
+  L  [label="set g d"]
+  M  [label="mul g e"]
+  N  [label="sub g b"]
+  O  [label="jnz g 2"]
+  P  [label="set f 0"]
+  Q  [label="sub e -1"]
+  R  [label="set g e"]
+  S  [label="sub g b"]
+  T  [label="jnz g -8"]
+  U  [label="sub d -1"]
+  V  [label="set g d"]
+  W  [label="sub g b"]
+  X  [label="jnz g -13"]
+  Y  [label="jnz f 2"]
+  Z  [label="sub h -1"]
+  AA [label="set g b"]
+  AB [label="sub g c"]
+  AC [label="jnz g 2"]
+  AD [label="jnz 1 3"]
+  AE [label="sub b -17"]
+  AF [label="jnz 1 -23"]
+
+  START [shape="box"]
+  STOP  [shape="box"]
+
+  START -> A
+  A -> B
+  B -> C
+  C -> D
+  C -> E [color="red"]
+  D -> E
+  D -> I [color="red"]
+  E -> F
+  F -> G
+  G -> H
+  H -> I
+  I -> J
+  J -> K
+  K -> L
+  L -> M
+  M -> N
+  N -> O
+  O -> P
+  O -> Q [color="red"]
+  P -> Q
+  Q -> R
+  R -> S
+  S -> T
+  T -> U
+  T -> L [color="red"]
+  U -> V
+  V -> W
+  W -> X
+  X -> Y
+  X -> K [color="red"]
+  Y -> Z
+  Y -> AA [color="red"]
+  Z -> AA
+  AA -> AB
+  AB -> AC
+  AC -> AD
+  AC -> AE [color="red"]
+  AD -> AE
+  AD -> STOP [color="red"]
+  AE -> AF
+  AF -> STOP
+  AF -> I [color="red"]
+}
